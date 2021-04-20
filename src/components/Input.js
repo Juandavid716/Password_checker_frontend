@@ -1,10 +1,11 @@
 import React from 'react';
 import {InputGroup, FormControl, Button} from "react-bootstrap";
+import {Weak, Strong} from "./Prediction"
 export default class Input extends React.Component {
 constructor(props){
     super(props);
     this.state = {
-        inputValue: ""
+        inputValue: "", password: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.submitPassword = this.submitPassword.bind(this);
@@ -17,19 +18,35 @@ handleChange(evt){
 }
 submitPassword(e){
     let password = this.state.inputValue;
-    alert('A name was submitted: ' + password);
+   
+
+    if(password.length<5) {
+        this.setState({password:"weak"})
+    } else {
+        this.setState({password:"strong"})
+    }
     e.preventDefault();
 }
 
 render(){
+    let answer;
+    if(this.state.password === "weak" ){
+        answer = <Weak/>
+    } else if (this.state.password==="strong") {
+        answer = <Strong/>
+    } else {
+        answer = ""
+    }
     return(
-    <div className="inputBox">
+    <div className="passwordBox" >
+        
+        <div className="inputBox" >
         <form className="form" onSubmit={this.submitPassword}>
             <InputGroup className="mb-3">
             <FormControl
             className="form" 
            
-            placeholder="Recipient's username"
+            placeholder="Digitar contraseña"
             aria-label="Recipient's username"
             aria-describedby="basic-addon2"
             value={this.state.inputValue} onChange={this.handleChange}
@@ -41,8 +58,15 @@ render(){
             
            
         </form>
+        
+        </div>
+        <div className="answerBox">
+        {answer}
+        </div>
+    </div>
        
-    </div>)
+  
+    )
 }
 
 

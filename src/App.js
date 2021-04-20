@@ -17,14 +17,14 @@ function App() {
           <h1> ¿Qué tan fuerte es tu contraseña?  </h1>
           </div>
           <h3>¡Compruebalo!</h3></div>
-          <div className="passwordBox">
+          
            <Input/>
-          </div>
+         
           
         
         </div>
         <div className="content">
-          <Result/>
+          
           <Footer/>
         </div>
         
