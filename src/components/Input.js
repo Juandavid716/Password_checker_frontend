@@ -1,5 +1,5 @@
 import React from 'react';
-import {InputGroup, FormControl, Button} from "react-bootstrap";
+import {InputGroup, FormControl, Button, ResponsiveEmbed} from "react-bootstrap";
 import {Weak, Strong} from "./Prediction"
 export default class Input extends React.Component {
 constructor(props){
@@ -18,13 +18,18 @@ handleChange(evt){
 }
 submitPassword(e){
     let password = this.state.inputValue;
-   
-
-    if(password.length<5) {
+    const URL_API = "https://apipasswordchecker.herokuapp.com/api/" + password;
+    fetch(URL_API).then(response => response.json())
+    .then((data) => {
+      let numberPass = data[0].num_it
+      console.log();
+      if(numberPass< 147573952589676410000) {
         this.setState({password:"weak"})
     } else {
         this.setState({password:"strong"})
     }
+    });
+   
     e.preventDefault();
 }
 
