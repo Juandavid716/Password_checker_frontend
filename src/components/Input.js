@@ -1,6 +1,5 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
-
+import {InputGroup, FormControl, Button} from "react-bootstrap";
 export default class Input extends React.Component {
 constructor(props){
     super(props);
@@ -26,11 +25,20 @@ render(){
     return(
     <div className="inputBox">
         <form className="form" onSubmit={this.submitPassword}>
-            <label>
-              Contraseña: <input type="text" value={this.state.inputValue} onChange={this.handleChange}/>
-            </label>
+            <InputGroup className="mb-3">
+            <FormControl
+            className="form" 
            
-            <Button variant="danger" type="submit" value="Submit" >Comprobar</Button>
+            placeholder="Recipient's username"
+            aria-label="Recipient's username"
+            aria-describedby="basic-addon2"
+            value={this.state.inputValue} onChange={this.handleChange}
+            />
+            <InputGroup.Append >
+            <Button variant="danger" type="submit" value="Submit"  >Comprobar</Button>
+            </InputGroup.Append>
+            </InputGroup>
+            
            
         </form>
        
