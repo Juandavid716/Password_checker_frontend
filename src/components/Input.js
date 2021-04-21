@@ -1,11 +1,13 @@
 import React from 'react';
-import {InputGroup, FormControl, Button, ResponsiveEmbed} from "react-bootstrap";
-import {Weak, Strong} from "./Prediction"
+import {InputGroup, FormControl, Button} from "react-bootstrap";
+import {Weak, Strong} from "./Prediction";
+import LoadingMask from "react-loadingmask";
+import "react-loadingmask/dist/react-loadingmask.css";
 export default class Input extends React.Component {
 constructor(props){
     super(props);
     this.state = {
-        inputValue: "", password: ""
+        inputValue: "", password: "", isLoading: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.submitPassword = this.submitPassword.bind(this);
@@ -16,18 +18,22 @@ handleChange(evt){
         inputValue: evt.target.value
     });
 }
-submitPassword(e){
+submitPassword =(e)=>  {
+    this.setState({password: "", isLoading: true});
     let password = this.state.inputValue;
+    console.log(password)
     const URL_API = "https://apipasswordchecker.herokuapp.com/api/" + password;
     fetch(URL_API).then(response => response.json())
     .then((data) => {
       let numberPass = data[0].num_it
       console.log();
+      
       if(numberPass< 147573952589676410000) {
         this.setState({password:"weak"})
     } else {
         this.setState({password:"strong"})
     }
+    this.setState({isLoading: false});
     });
    
     e.preventDefault();
@@ -35,6 +41,13 @@ submitPassword(e){
 
 render(){
     let answer;
+    let loadingDiv = ['load']
+
+    if(this.state.isLoading){
+        loadingDiv.push('Active')
+    }
+
+
     if(this.state.password === "weak" ){
         answer = <Weak/>
     } else if (this.state.password==="strong") {
@@ -65,9 +78,13 @@ render(){
         </form>
         
         </div>
-        <div className="answerBox">
+        <LoadingMask loading={this.state.isLoading} text={"loading..."} className="isLoading">
+        <div className={loadingDiv.join('')} style={{ width: 100, height: 50 }}></div>
+        <div  className="answerBox">
         {answer}
         </div>
+        </LoadingMask>
+        
     </div>
        
   
