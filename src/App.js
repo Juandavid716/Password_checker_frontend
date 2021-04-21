@@ -2,13 +2,13 @@ import Input from "./components/Input";
 //import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Result from "./components/Result"
+
 
 function App() {
   return (
     <div className="App">
       
-      <header className="App-header">
+      <section className="App-header">
       
         <Header/>
         <div className="inputHeader">
@@ -29,7 +29,7 @@ function App() {
         </div>
         
         
-      </header>
+      </section>
     </div>
   );
 }
