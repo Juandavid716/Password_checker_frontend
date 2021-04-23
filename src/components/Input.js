@@ -1,5 +1,5 @@
 import React from 'react';
-import {InputGroup, FormControl, Button} from "react-bootstrap";
+import {InputGroup, FormControl, Button, Modal} from "react-bootstrap";
 import {Weak, Strong} from "./Prediction";
 import LoadingMask from "react-loadingmask";
 import "react-loadingmask/dist/react-loadingmask.css";
@@ -7,7 +7,7 @@ export default class Input extends React.Component {
 constructor(props){
     super(props);
     this.state = {
-        inputValue: "", password: "", isLoading: false
+        inputValue: "", password: "", isLoading: false, modalComponent: false, message: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.submitPassword = this.submitPassword.bind(this);
@@ -19,28 +19,44 @@ handleChange(evt){
     });
 }
 submitPassword =(e)=>  {
-    this.setState({password: "", isLoading: true});
+    this.setState({password: "", isLoading: true, modalComponent: false, message: ""});
     let password = this.state.inputValue;
-    console.log(password)
-    const URL_API = "https://apipasswordchecker.herokuapp.com/api/" + password;
-    fetch(URL_API).then(response => response.json())
-    .then((data) => {
-      let numberPass = data[0].num_it
-      console.log();
-      
-      if(numberPass< 147573952589676410000) {
-        this.setState({password:"weak"})
-    } else {
-        this.setState({password:"strong"})
+    
+    if(password.length=== 0 ){
+        this.setState({modalComponent: true, message: "Debe digitar una contraseña", isLoading: false})
+        
+    } else if (password.length < 6) {
+        this.setState({modalComponent: true, message: "La contraseña no puede tener menos de 6 carácteres", isLoading: false })
     }
-    this.setState({isLoading: false});
-    });
+    else {
+        const URL_API = "https://apipasswordchecker.herokuapp.com/api/" + password;
+        fetch(URL_API).then(response => response.json())
+        .then((data) => {
+          let numberPass = data[0].num_it
+          console.log();
+          
+          if(numberPass< 147573952589676410000) {
+            this.setState({password:"weak"})
+        } else {
+            this.setState({password:"strong"})
+        }
+        this.setState({isLoading: false});
+        });    
+    }
+    
+   
    
     e.preventDefault();
 }
 
+
+
+closeModal = ()=> {
+this.setState({modalComponent: false})
+}
+
 render(){
-    let answer;
+    let answer, info;
     let loadingDiv = ['load']
 
     if(this.state.isLoading){
@@ -55,6 +71,7 @@ render(){
     } else {
         answer = ""
     }
+
     return(
     <div className="passwordBox" >
         
@@ -71,6 +88,19 @@ render(){
             />
             <InputGroup.Append >
             <Button variant="danger" type="submit" value="Submit"  >Comprobar</Button>
+             {info}
+             <Modal show={this.state.modalComponent} onHide={()=> {this.closeModal()}}>
+              <Modal.Header closeButton>
+                <Modal.Title>Error:</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{this.state.message}</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={()=> {this.closeModal()}}>
+                  Cerrar
+                </Button>
+             
+              </Modal.Footer>
+            </Modal>
             </InputGroup.Append>
             </InputGroup>
             
