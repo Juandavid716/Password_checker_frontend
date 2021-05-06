@@ -1,6 +1,6 @@
 import React from 'react';
 import {InputGroup, FormControl, Button, Modal} from "react-bootstrap";
-import {Weak, Strong} from "./Prediction";
+import Prediction from "./Prediction";
 import LoadingMask from "react-loadingmask";
 import "react-loadingmask/dist/react-loadingmask.css";
 export default class Input extends React.Component {
@@ -32,15 +32,11 @@ submitPassword =(e)=>  {
         const URL_API = "https://apipasswordchecker.herokuapp.com/api/" + password;
         fetch(URL_API).then(response => response.json())
         .then((data) => {
-          let numberPass = data[0].num_it
-          console.log();
-          
-          if(numberPass< 147573952589676410000) {
-            this.setState({password:"weak"})
-        } else {
-            this.setState({password:"strong"})
-        }
-        this.setState({isLoading: false});
+          let message = data[0].num_it
+          let rank = data[0].range;
+          console.log(rank);
+          this.setState({password: message, rank: rank})
+          this.setState({isLoading: false});
         });    
     }
     
@@ -63,13 +59,17 @@ render(){
         loadingDiv.push('Active')
     }
 
-
-    if(this.state.password === "weak" ){
-        answer = <Weak/>
-    } else if (this.state.password==="strong") {
-        answer = <Strong/>
+   
+    if(this.state.rank === "1" ){
+        answer = <Prediction color="#fa1302" message={this.state.password}/>
+    } else if (this.state.rank === "2" ) {
+        answer = <Prediction color="#d65147" message={this.state.password}/>
+    } else if (this.state.rank === "3") {
+        answer = <Prediction color="#e4f218" message={this.state.password}/>
+    } else if (this.state.rank === "4") {
+        answer = <Prediction color="#89e851" message={this.state.password}/>
     } else {
-        answer = ""
+        answer = <Prediction color="#2d7303" message={this.state.password}/>
     }
 
     return(

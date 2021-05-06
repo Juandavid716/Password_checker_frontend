@@ -1,12 +1,8 @@
 import React from 'react';
-export const Weak = class Weak extends React.Component{
+export default class Prediction extends React.Component{
 
 render(){
-    return(<div style={{color : "#f01e07"}}> La contraseña es muy debil </div>)
+    const {color, message} = this.props;
+    return(<div style={{color : color}}> {message}</div>)
 }
-}
-export const Strong = class Strong extends React.Component {
-    render(){
-        return(<div style={{color : "#20e655"}}> La contraseña es muy fuerte </div>)
-    }
 }
