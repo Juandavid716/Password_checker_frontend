@@ -7,7 +7,7 @@ export default class Input extends React.Component {
 constructor(props){
     super(props);
     this.state = {
-        inputValue: "", password: "", isLoading: false, modalComponent: false, message: ""
+        inputValue: "", password: "", isLoading: false, modalComponent: false, message: "", completeMessage: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.submitPassword = this.submitPassword.bind(this);
@@ -18,8 +18,20 @@ handleChange(evt){
         inputValue: evt.target.value
     });
 }
+verifyAccents(password){
+    var accentArray = ["ž","Ž","š","Š","«", "»","ð","Ð","æ","Æ","Ø","ø","ß","ÿ","ü","ö","ï","Ÿ","Ü","Ö","Ï","Ë","á","à","ã","â","é","è","ê","í","ì","î","õ","ó","ò","ô","ú","ù","û","ü","ä","ö","À","È","Ì","Ò","Ù","Á","É","Í","Ó","Ú","Ý","ý","Û"," Â","Ê" ,"Î","Ô","Û","Ä"]
+   
+    for(var i=0; i < password.length; i++){
+        for(var j=0; j < accentArray.length; j++){
+            if(password[i] === accentArray[j]){
+                return true;
+            }
+        }
+    }
+    return false;
+}
 submitPassword =(e)=>  {
-    this.setState({password: "", isLoading: true, modalComponent: false, message: ""});
+    this.setState({password: "", isLoading: true, modalComponent: false, message: "", completeMessage: ""});
     let password = this.state.inputValue;
     
     if(password.length=== 0 ){
@@ -27,15 +39,19 @@ submitPassword =(e)=>  {
         
     } else if (password.length < 6) {
         this.setState({modalComponent: true, message: "La contraseña no puede tener menos de 6 carácteres", isLoading: false })
+    } else if (this.verifyAccents(password)){
+        this.setState({modalComponent: true, message: "La contraseña no puede tener caracteres inválidos", isLoading: false })
     }
     else {
         const URL_API = "https://apipasswordchecker.herokuapp.com/api/" + password;
         fetch(URL_API).then(response => response.json())
         .then((data) => {
-          let message = data[0].num_it
+          let message = data[0].num_it + "."
           let rank = data[0].range;
-          console.log(rank);
-          this.setState({password: message, rank: rank})
+          let enumeration = data[0].enumeration;
+          let completeMessage = "Un ataque de fuerza bruta enumeraría su contraseña en " + enumeration +" con una CPU Intel Core i7–970";
+          console.log(enumeration);
+          this.setState({password: message, rank: rank, completeMessage: completeMessage})
           this.setState({isLoading: false});
         });    
     }
@@ -61,15 +77,15 @@ render(){
 
    
     if(this.state.rank === "1" ){
-        answer = <Prediction color="#fa1302" message={this.state.password}/>
+        answer = <Prediction color="#fa1302" message={this.state.password} completeMessage={this.state.completeMessage}/>
     } else if (this.state.rank === "2" ) {
-        answer = <Prediction color="#d65147" message={this.state.password}/>
+        answer = <Prediction color="#d65147" message={this.state.password} completeMessage={this.state.completeMessage}/>
     } else if (this.state.rank === "3") {
-        answer = <Prediction color="#e4f218" message={this.state.password}/>
+        answer = <Prediction color="#e4f218" message={this.state.password} completeMessage={this.state.completeMessage}/>
     } else if (this.state.rank === "4") {
-        answer = <Prediction color="#89e851" message={this.state.password}/>
+        answer = <Prediction color="#89e851" message={this.state.password} completeMessage={this.state.completeMessage}/>
     } else {
-        answer = <Prediction color="#2d7303" message={this.state.password}/>
+        answer = <Prediction color="#2d7303" message={this.state.password} completeMessage={this.state.completeMessage}/>
     }
 
     return(
