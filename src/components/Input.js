@@ -19,27 +19,21 @@ handleChange(evt){
     });
 }
 verifyAccents(password){
-    var accentArray = ["ž","Ž","š","Š","«", "»","ð","Ð","æ","Æ","Ø","ø","ß","ÿ","ü","ö","ï","Ÿ","Ü","Ö","Ï","Ë","á","à","ã","â","é","è","ê","í","ì","î","õ","ó","ò","ô","ú","ù","û","ü","ä","ö","À","È","Ì","Ò","Ù","Á","É","Í","Ó","Ú","Ý","ý","Û"," Â","Ê" ,"Î","Ô","Û","Ä"]
-   
-    for(var i=0; i < password.length; i++){
-        for(var j=0; j < accentArray.length; j++){
-            if(password[i] === accentArray[j]){
-                return true;
-            }
-        }
-    }
-    return false;
+    return /^[\x00-\x7F]*$/.test(password);
 }
 submitPassword =(e)=>  {
     this.setState({password: "", isLoading: true, modalComponent: false, message: "", completeMessage: ""});
     let password = this.state.inputValue;
-    
-    if(password.length=== 0 ){
+    let remText = password.replace(/\s/g, "")
+    let length = remText.length;
+    if(length=== 0 ){
         this.setState({modalComponent: true, message: "Debe digitar una contraseña", isLoading: false})
         
-    } else if (password.length < 6) {
+    } else if (length < 6) {
         this.setState({modalComponent: true, message: "La contraseña no puede tener menos de 6 carácteres", isLoading: false })
-    } else if (this.verifyAccents(password)){
+    } else if (length > 17) {
+        this.setState({modalComponent: true, message: "La contraseña no puede tener mas de 17 carácteres", isLoading: false })
+    } else if (!this.verifyAccents(password)){
         this.setState({modalComponent: true, message: "La contraseña no puede tener caracteres inválidos", isLoading: false })
     }
     else {
@@ -53,7 +47,11 @@ submitPassword =(e)=>  {
           console.log(enumeration);
           this.setState({password: message, rank: rank, completeMessage: completeMessage})
           this.setState({isLoading: false});
-        });    
+        }, (error) => {
+            if (error) {
+                this.setState({modalComponent: true, message: "La contraseña no es válida", isLoading: false })
+            }
+          });
     }
     
    
@@ -85,7 +83,7 @@ render(){
     } else if (this.state.rank === "4") {
         answer = <Prediction color="#89e851" message={this.state.password} completeMessage={this.state.completeMessage}/>
     } else {
-        answer = <Prediction color="#2d7303" message={this.state.password} completeMessage={this.state.completeMessage}/>
+        answer = <Prediction color="#15f511" message={this.state.password} completeMessage={this.state.completeMessage}/>
     }
 
     return(
